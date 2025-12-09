@@ -4,7 +4,7 @@ pub trait Terminal {
 
 #[cfg(feature = "l300")]
 mod l300;
-#[cfg(all(feature = "l300"))]
+#[cfg(feature = "l300")]
 pub use l300::TerminalL300 as CurrentTerminal;
 
 #[cfg(feature = "l200")]
