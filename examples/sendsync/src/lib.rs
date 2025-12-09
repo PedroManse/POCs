@@ -1,38 +1,44 @@
+//! [Send] = Pode enviar `T`
+//!
+//! [Sync] = Pode enviar `&T`
+
 use std::cell::Cell;
 use std::rc::Rc;
 
-/// [Sync] = Pode enviar &T
-/// [Send] = Pode enviar T
-
-fn not_send(x: Rc<i32>) {
+// Não compila
+pub fn not_send(x: Rc<i32>) {
     std::thread::spawn(move || {
         let k = x;
     });
 }
 
-fn so_its_not_sync(x: Rc<i32>) {
+// Não compila
+pub fn so_its_not_sync(x: Rc<i32>) {
     std::thread::spawn(|| {
         let k = &x;
     });
 }
 
-fn is_send(x: Cell<i32>) {
+// Compila
+pub fn is_send(x: Cell<i32>) {
     std::thread::spawn(move || {
         let k = x;
     });
 }
 
-fn but_not_sync(x: Cell<i32>) {
+// Não compila
+pub fn but_not_sync(x: Cell<i32>) {
     std::thread::spawn(|| {
         let k = &x;
         k.set(5);
     });
 }
 
-//fn not_send(x: ?) {}
-//fn but_is_sync(x: ?) {}
+// trait Sync<T: Send>
+// Então não existe T que: ?Send + Sync
 
-fn why_is_this_sync(x: &mut i32) {
+// Compila?
+pub fn why_is_this_sync(x: &mut i32) {
     std::thread::scope(|s| {
         s.spawn(|| {
             let k = &x;
